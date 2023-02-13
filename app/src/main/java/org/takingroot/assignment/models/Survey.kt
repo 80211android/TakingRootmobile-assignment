@@ -12,12 +12,39 @@ data class Survey(
     @NonNull
     var id: UUID = UUID.randomUUID(),
 
-    @NonNull
-    var name: String = "",
+//    @NonNull
+//    var name: String = "",
+//
+//    @NonNull
+//    @Expose
+//    var payload: Map<String, Any> = mapOf(),
 
-    @NonNull
+//    @NonNull
+//    var first_name: String = "John",
+//    @NonNull
+//    var last_name: String = "Tom",
+//    @NonNull
+//    var birth_date: String = "2001/03/11",
+//    @NonNull
+//    var email: String = "mil@kko.co",
+
     @Expose
-    var payload: Map<String, Any> = mapOf()
+    @NonNull
+    val first_name: String,
+
+    @Expose
+    @NonNull
+    val last_name: String,
+
+    @Expose
+    @NonNull
+    val birth_date: String,
+
+    @Expose
+    @NonNull
+    val email: String,
+
+
 )
 
 @Dao

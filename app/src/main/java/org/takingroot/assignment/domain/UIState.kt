@@ -4,12 +4,16 @@ package org.takingroot.assignment.domain
  * Created by Saurabh
  */
 data class UIState(
-    val accountNumber: String = "",
+    val username: String = "",
+    val userLastname: String = "",
+
+    val email: String = "",
+
     val confirmAccountNumber: String = "",
     val code: String = "",
     val ownerName: String = "",
-    val hasAccountError: Boolean = false,
-    val hasConfirmAccountError: Boolean = false,
-    val hasCodeError: Boolean = false,
+    val usernameError: Boolean = false,
+    val userLastnameError: Boolean = false,
+    val emailError: Boolean = false,
     val hasNameError: Boolean = false,
 )

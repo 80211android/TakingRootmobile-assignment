@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 
 interface BaseAPIService {
     @POST("survey/{type}")
-    suspend fun response(@Path("type") type: String, @Body survey: Survey): Response<Void>
+    suspend fun response(@Path("type") type: String, @Body survey: Survey): UserResponse
 
     @GET("survey/user")
     suspend fun getUserSurveys(): Response<APIResponse<UserResponse>>
@@ -27,7 +27,7 @@ class RetrofitInstance {
         private val accountIdInterceptor = Interceptor {
             val request = it.request()
                 .newBuilder()
-                .addHeader("account_id", "")
+                .addHeader("account_id", "344f04dc-11f5-4b40-aaa0-06719d02dc03")
                 .build()
             it.proceed(request)
         }

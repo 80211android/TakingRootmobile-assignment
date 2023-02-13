@@ -1,5 +1,6 @@
 package org.takingroot.assignment.networking
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
@@ -18,10 +19,19 @@ data class APIResponse<T>(
 
 
 data class UserResponse(
+    @Expose
     @SerializedName("id")
-    var id: String,
+    val id: String,
+    @Expose
     @SerializedName("first_name")
-    var firstName: String,
+    val first_name: String,
     @SerializedName("last_name")
-    var last_name: String
+    @Expose
+    val last_name: String,
+    @Expose
+    @SerializedName("email")
+    val email: String,
+    @Expose
+    @SerializedName("birth_date")
+    val birth_date: String
 )

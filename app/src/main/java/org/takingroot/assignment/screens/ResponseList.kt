@@ -18,11 +18,15 @@ fun ResponseList(viewModel: SurveyViewModel) {
     fun createSamples() {
         val surveys = (0..5).map {
             Survey(
-                name = "custom",
-                payload = mapOf(
-                    "foo" to "bar",
-                    "bar" to "foo"
-                )
+                first_name = "custom",
+                last_name = "custom",
+                birth_date = "custom",
+                email = "custom"
+//                name = "custom",
+//                payload = mapOf(
+//                    "foo" to "bar",
+//                    "bar" to "foo"
+//                )
             )
         }
         viewModel.save(surveys = surveys.toTypedArray())
@@ -34,7 +38,7 @@ fun ResponseList(viewModel: SurveyViewModel) {
 
         Column {
             surveys?.forEach {
-                Text(text = "Survey ${it.name}")
+                Text(text = "Survey  of  ${it.first_name}")
             }
         }
         Row {

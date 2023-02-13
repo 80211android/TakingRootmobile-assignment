@@ -21,10 +21,12 @@ import org.takingroot.assignment.networking.BaseAPIService
 import org.takingroot.assignment.networking.RetrofitInstance
 import org.takingroot.assignment.repositories.ISurveyRepository
 import org.takingroot.assignment.repositories.SurveyRepository
+import org.takingroot.assignment.utils.VerificationUtil
 
 class SurveyViewModel(
     private val repository: ISurveyRepository,
-    private val apiService: BaseAPIService
+    private val apiService: BaseAPIService,
+    private val verificationUtil: VerificationUtil
 ) : ViewModel() {
     val surveys = repository.surveys
 
@@ -38,13 +40,30 @@ class SurveyViewModel(
     }
 
     fun send(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
-        withContext(this.coroutineContext) {
-            surveys.forEach {
-                apiService.response(it.name, it)
-                repository.delete(it)
-            }
-            repository.fetchAll()
+//        withContext(this.coroutineContext) {
+//            surveys.forEach {
+//                val r = apiService.response("user", it)
+//                val t = r
+//
+//                repository.delete(it)
+//            }
+//            repository.fetchAll()
+//        }
+
+        surveys.forEach {
+            val response = apiService.response("user", it)
+            val t = response
+
+            repository.delete(it)
         }
+        repository.fetchAll()
+    }
+
+    fun sendSurvey(survey: Survey) = viewModelScope.launch(Dispatchers.IO) {
+        val r = apiService.response("user", survey)
+        val t = r
+        repository.fetchAll()
+
     }
 
     fun save(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
@@ -64,7 +83,7 @@ class SurveyViewModel(
         when(event) {
             is UIEvent.AccountChanged -> {
                 _uiState.value = _uiState.value.copy(
-                    accountNumber = event.account
+                    userLastname = event.account
                 )
             }
             is UIEvent.ConfirmAccountChanged -> {
@@ -79,7 +98,26 @@ class SurveyViewModel(
             }
             is UIEvent.NameChanged -> {
                 _uiState.value = _uiState.value.copy(
-                    ownerName = event.name
+                    username = event.name
+                )
+                _uiState.value = _uiState.value.copy(
+                    usernameError = verificationUtil.isFieldValid(_uiState.value.username).status.not()
+                )
+            }
+            is UIEvent.LastNameChanged -> {
+                _uiState.value = _uiState.value.copy(
+                    userLastname = event.name
+                )
+                _uiState.value = _uiState.value.copy(
+                    userLastnameError = verificationUtil.isFieldValid(_uiState.value.userLastname).status.not()
+                )
+            }
+            is UIEvent.EmailChanged-> {
+                _uiState.value = _uiState.value.copy(
+                    email = event.email
+                )
+                _uiState.value = _uiState.value.copy(
+                    emailError = verificationUtil.isEmailValid(_uiState.value.email).status.not()
                 )
             }
             is UIEvent.Submit -> {
@@ -89,17 +127,22 @@ class SurveyViewModel(
     }
 
     private fun validateInputs() {
-        val accountResult = Validator.validateAccountNumber(_uiState.value.accountNumber)
+        val accountResult = Validator.validateAccountNumber(_uiState.value.userLastname)
         val confirmAccountResult = Validator.validateConfirmAccountNumber(
-            _uiState.value.accountNumber,
+            _uiState.value.userLastname,
             _uiState.value.confirmAccountNumber
         )
         val codeResult = Validator.validateBankCode(_uiState.value.code)
         val nameResult = Validator.validateOwnerName(_uiState.value.ownerName)
+
+        val usernameValid = verificationUtil.isFieldValid(_uiState.value.username).status
+        val userLastnameValid = verificationUtil.isFieldValid(_uiState.value.userLastname).status
+        val emailValid =  verificationUtil.isEmailValid(_uiState.value.email).status
+
         _uiState.value = _uiState.value.copy(
-            hasAccountError = !accountResult.status,
-            hasConfirmAccountError = !confirmAccountResult.status,
-            hasCodeError = !codeResult.status,
+            usernameError = usernameValid.not(),
+            userLastnameError = userLastnameValid.not(),
+            emailError = emailValid.not(),
             hasNameError = !nameResult.status,
         )
         val hasError = listOf(
@@ -108,8 +151,22 @@ class SurveyViewModel(
             codeResult,
             nameResult
         ).any { !it.status }
+
+
         viewModelScope.launch {
-            if (!hasError) {
+            if (usernameValid && userLastnameValid && emailValid) {
+
+                val survey = Survey(
+                    first_name = _uiState.value.username,
+                    last_name = _uiState.value.userLastname,
+                    birth_date = "2001-03-11",
+                    email = uiState.value.email
+//                    payload = mapOf(
+//                        "Lastname" to _uiState.value.userLastname,
+//                        "Email" to _uiState.value.email
+//                    )
+                )
+                save(survey)
                 validationEvent.emit(ValidationEvent.Success)
             }
         }
@@ -126,7 +183,8 @@ class SurveyViewModel(
 
                 val db = AppDatabase.getDatabase(application)
                 val repository = SurveyRepository(db.surveyDao())
-                return SurveyViewModel(repository, RetrofitInstance.getInstance()) as T
+                val verificationUtil = VerificationUtil()
+                return SurveyViewModel(repository, RetrofitInstance.getInstance(), verificationUtil) as T
             }
         }
     }
