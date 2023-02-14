@@ -120,6 +120,14 @@ class SurveyViewModel(
                     emailError = verificationUtil.isEmailValid(_uiState.value.email).status.not()
                 )
             }
+            is UIEvent.BirthDateChanged -> {
+                _uiState.value = _uiState.value.copy(
+                    birthDate = event.date
+                )
+                _uiState.value = _uiState.value.copy(
+                    birthDateError = verificationUtil.isBirthDateValid(_uiState.value.birthDate).status.not()
+                )
+            }
             is UIEvent.Submit -> {
                 validateInputs()
             }
@@ -138,12 +146,14 @@ class SurveyViewModel(
         val usernameValid = verificationUtil.isFieldValid(_uiState.value.username).status
         val userLastnameValid = verificationUtil.isFieldValid(_uiState.value.userLastname).status
         val emailValid =  verificationUtil.isEmailValid(_uiState.value.email).status
+        val birthDateValid = verificationUtil.isBirthDateValid(_uiState.value.birthDate).status
 
         _uiState.value = _uiState.value.copy(
             usernameError = usernameValid.not(),
             userLastnameError = userLastnameValid.not(),
             emailError = emailValid.not(),
             hasNameError = !nameResult.status,
+            birthDateError = birthDateValid.not()
         )
         val hasError = listOf(
             accountResult,
@@ -159,7 +169,7 @@ class SurveyViewModel(
                 val survey = Survey(
                     first_name = _uiState.value.username,
                     last_name = _uiState.value.userLastname,
-                    birth_date = "2001-03-11",
+                    birth_date = _uiState.value.birthDate,
                     email = uiState.value.email
 //                    payload = mapOf(
 //                        "Lastname" to _uiState.value.userLastname,

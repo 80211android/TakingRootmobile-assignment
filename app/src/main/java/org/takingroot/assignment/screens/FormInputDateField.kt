@@ -1,5 +1,11 @@
 package org.takingroot.assignment.screens
 
+import android.app.DatePickerDialog
+import android.content.Context
+import android.widget.DatePicker
+import java.util.*
+
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun FormInputField(
+fun FormInputDateField(
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
@@ -28,14 +34,65 @@ fun FormInputField(
     onNext: (KeyboardActionScope) -> Unit,
     onDone: (KeyboardActionScope) -> Unit,
     readOnly: Boolean = false,
-    modifier: Modifier = Modifier.fillMaxWidth()
+    context: Context
 ) {
     var text by remember {
         mutableStateOf("")
     }
 
+    val focusRequester = remember { FocusRequester() }
+
+    val mYear: Int
+    val mMonth: Int
+    val mDay: Int
+
+    val mCalendar = Calendar.getInstance()
+
+    mYear = mCalendar.get(Calendar.YEAR)
+    mMonth = mCalendar.get(Calendar.MONTH)
+    mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+    val mDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+//                mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+
+            val x = mMonth
+        }, mYear, mMonth, mDay
+    )
+
+
     OutlinedTextField(
-        modifier = modifier,
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    // focused
+                    DatePickerDialog(
+                        context,
+                        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+//                mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+
+                            val month = (mMonth + 1).toString()
+                            val validMonth = if (month.length < 2) {
+                                "0$month"
+                            } else {
+                                month
+                            }
+                            val dates = "${mYear}-${validMonth}-$mDayOfMonth"
+                            text = dates
+                            val x = mMonth
+                            onTextChanged(dates)
+
+                        }, mYear, mMonth, mDay
+                    ).show()
+                } else {
+                    // not focused
+                    val x = it
+
+                }
+            }
+            .fillMaxWidth(),
         value = text,
         onValueChange = {
             text = it

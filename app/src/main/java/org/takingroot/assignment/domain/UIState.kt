@@ -8,6 +8,8 @@ data class UIState(
     val userLastname: String = "",
 
     val email: String = "",
+    val birthDate: String = "",
+
 
     val confirmAccountNumber: String = "",
     val code: String = "",
@@ -15,5 +17,6 @@ data class UIState(
     val usernameError: Boolean = false,
     val userLastnameError: Boolean = false,
     val emailError: Boolean = false,
+    val birthDateError: Boolean = false,
     val hasNameError: Boolean = false,
 )

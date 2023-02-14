@@ -1,6 +1,8 @@
 package org.takingroot.assignment.utils
 
 import android.util.Patterns
+import java.time.LocalDate
+import java.time.Period
 
 class VerificationUtil {
 
@@ -18,6 +20,29 @@ class VerificationUtil {
         } else {
             ValidationResult(username.isNotBlank())
         }
+    }
+
+    fun isBirthDateValid(date: String?): ValidationResult{
+        return if (date.isNullOrEmpty()) {
+            ValidationResult(false)
+        } else {
+
+            val dateList = date.split("-") ?: emptyList()
+            if (dateList.size > 2) {
+                val userAge = getAge(dateList[0], dateList[1], dateList[2])
+                if (userAge >= 18) {
+                    return ValidationResult(true)
+                }
+            }
+            ValidationResult(false)
+        }
+    }
+
+    private fun getAge(year: String, month: String, dayOfMonth: String): Int {
+        return Period.between(
+            LocalDate.of(year.toInt(), month.toInt(), dayOfMonth.toInt()),
+            LocalDate.now()
+        ).years
     }
 }
 
