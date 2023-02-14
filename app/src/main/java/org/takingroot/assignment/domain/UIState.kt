@@ -18,5 +18,4 @@ data class UIState(
     val userLastnameError: Boolean = false,
     val emailError: Boolean = false,
     val birthDateError: Boolean = false,
-    val hasNameError: Boolean = false,
 )

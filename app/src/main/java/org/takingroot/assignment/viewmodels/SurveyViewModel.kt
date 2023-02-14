@@ -22,6 +22,8 @@ import org.takingroot.assignment.networking.RetrofitInstance
 import org.takingroot.assignment.repositories.ISurveyRepository
 import org.takingroot.assignment.repositories.SurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil
+import retrofit2.HttpException
+import java.io.IOException
 
 class SurveyViewModel(
     private val repository: ISurveyRepository,
@@ -32,7 +34,6 @@ class SurveyViewModel(
 
     private var _uiState = mutableStateOf(UIState())
     val uiState: State<UIState> = _uiState
-
     val validationEvent = MutableSharedFlow<ValidationEvent>()
 
     init {
@@ -40,38 +41,43 @@ class SurveyViewModel(
     }
 
     fun send(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
-//        withContext(this.coroutineContext) {
-//            surveys.forEach {
-//                val r = apiService.response("user", it)
-//                val t = r
-//
-//                repository.delete(it)
-//            }
-//            repository.fetchAll()
-//        }
-
         surveys.forEach {
-            val response = apiService.response("user", it)
-            val t = response
 
-            repository.delete(it)
+            try {
+                val response = apiService.response("user", it)
+                val t = response
+                repository.delete(it)
+
+            } catch (exception: Exception) {
+
+                val x = (exception as? HttpException)?.response()?.errorBody()?.string()
+                val t = x
+                when (exception) {
+                    is IOException -> {
+                        val t = "vv"
+                    }
+                    is HttpException -> {
+                        val t = exception.code()
+
+                    }
+                }
+            }
+
+
         }
         repository.fetchAll()
-    }
-
-    fun sendSurvey(survey: Survey) = viewModelScope.launch(Dispatchers.IO) {
-        val r = apiService.response("user", survey)
-        val t = r
-        repository.fetchAll()
-
     }
 
     fun save(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
-        withContext(this.coroutineContext) {
-            repository.save(
-                *surveys
-            )
-        }
+//        withContext(this.coroutineContext) {
+//            repository.save(
+//                *surveys
+//            )
+//        }
+
+        repository.save(
+            *surveys
+        )
         refresh()
     }
 
@@ -135,14 +141,6 @@ class SurveyViewModel(
     }
 
     private fun validateInputs() {
-        val accountResult = Validator.validateAccountNumber(_uiState.value.userLastname)
-        val confirmAccountResult = Validator.validateConfirmAccountNumber(
-            _uiState.value.userLastname,
-            _uiState.value.confirmAccountNumber
-        )
-        val codeResult = Validator.validateBankCode(_uiState.value.code)
-        val nameResult = Validator.validateOwnerName(_uiState.value.ownerName)
-
         val usernameValid = verificationUtil.isFieldValid(_uiState.value.username).status
         val userLastnameValid = verificationUtil.isFieldValid(_uiState.value.userLastname).status
         val emailValid =  verificationUtil.isEmailValid(_uiState.value.email).status
@@ -152,29 +150,17 @@ class SurveyViewModel(
             usernameError = usernameValid.not(),
             userLastnameError = userLastnameValid.not(),
             emailError = emailValid.not(),
-            hasNameError = !nameResult.status,
             birthDateError = birthDateValid.not()
         )
-        val hasError = listOf(
-            accountResult,
-            confirmAccountResult,
-            codeResult,
-            nameResult
-        ).any { !it.status }
-
 
         viewModelScope.launch {
-            if (usernameValid && userLastnameValid && emailValid) {
+            if (usernameValid && userLastnameValid && emailValid && birthDateValid) {
 
                 val survey = Survey(
                     first_name = _uiState.value.username,
                     last_name = _uiState.value.userLastname,
                     birth_date = _uiState.value.birthDate,
                     email = uiState.value.email
-//                    payload = mapOf(
-//                        "Lastname" to _uiState.value.userLastname,
-//                        "Email" to _uiState.value.email
-//                    )
                 )
                 save(survey)
                 validationEvent.emit(ValidationEvent.Success)

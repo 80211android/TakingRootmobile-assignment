@@ -22,11 +22,6 @@ fun ResponseList(viewModel: SurveyViewModel) {
                 last_name = "custom",
                 birth_date = "custom",
                 email = "custom"
-//                name = "custom",
-//                payload = mapOf(
-//                    "foo" to "bar",
-//                    "bar" to "foo"
-//                )
             )
         }
         viewModel.save(surveys = surveys.toTypedArray())

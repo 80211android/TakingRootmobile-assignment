@@ -79,7 +79,15 @@ fun FormInputDateField(
                             } else {
                                 month
                             }
-                            val dates = "${mYear}-${validMonth}-$mDayOfMonth"
+
+                            val day = mDayOfMonth.toString()
+                            val validDay = if (day.length < 2) {
+                                "0$day"
+                            } else {
+                                day
+                            }
+
+                            val dates = "${mYear}-${validMonth}-$validDay"
                             text = dates
                             val x = mMonth
                             onTextChanged(dates)
