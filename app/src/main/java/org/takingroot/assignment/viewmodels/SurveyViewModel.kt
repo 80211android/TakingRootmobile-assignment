@@ -14,11 +14,10 @@ import kotlinx.coroutines.withContext
 import org.takingroot.assignment.domain.UIEvent
 import org.takingroot.assignment.domain.UIState
 import org.takingroot.assignment.domain.ValidationEvent
-import org.takingroot.assignment.domain.Validator
 import org.takingroot.assignment.models.AppDatabase
 import org.takingroot.assignment.models.Survey
-import org.takingroot.assignment.networking.BaseAPIService
-import org.takingroot.assignment.networking.RetrofitInstance
+import org.takingroot.assignment.networking.RemoteRepository
+import org.takingroot.assignment.networking.Service
 import org.takingroot.assignment.repositories.ISurveyRepository
 import org.takingroot.assignment.repositories.SurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil
@@ -27,7 +26,7 @@ import java.io.IOException
 
 class SurveyViewModel(
     private val repository: ISurveyRepository,
-    private val apiService: BaseAPIService,
+    private val remoteRepository: RemoteRepository,
     private val verificationUtil: VerificationUtil
 ) : ViewModel() {
     val surveys = repository.surveys
@@ -41,24 +40,18 @@ class SurveyViewModel(
     }
 
     fun send(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
-        surveys.forEach {
+        surveys.forEach { survey ->
 
             try {
-                val response = apiService.response("user", it)
+                val response = remoteRepository.sendSurvey(survey)
                 val t = response
-                repository.delete(it)
+//                repository.delete(it)
 
             } catch (exception: Exception) {
 
-                val x = (exception as? HttpException)?.response()?.errorBody()?.string()
-                val t = x
                 when (exception) {
-                    is IOException -> {
-                        val t = "vv"
-                    }
                     is HttpException -> {
-                        val t = exception.code()
-
+                        val errorMessage = exception.response()?.errorBody()?.string()
                     }
                 }
             }
@@ -164,23 +157,6 @@ class SurveyViewModel(
                 )
                 save(survey)
                 validationEvent.emit(ValidationEvent.Success)
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                // Get the Application object from extras
-                val application = checkNotNull(extras[APPLICATION_KEY])
-
-                val db = AppDatabase.getDatabase(application)
-                val repository = SurveyRepository(db.surveyDao())
-                val verificationUtil = VerificationUtil()
-                return SurveyViewModel(repository, RetrofitInstance.getInstance(), verificationUtil) as T
             }
         }
     }
