@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import org.takingroot.assignment.ViewModelFactory
 import org.takingroot.assignment.models.Survey
 import org.takingroot.assignment.viewmodels.SurveyViewModel
 
@@ -40,12 +41,12 @@ fun ResponseList(viewModel: SurveyViewModel) {
             Button(onClick = viewModel::refresh) {
                 Text(text = "Refresh list")
             }
-            Button(onClick = { createSamples() }) {
-                Text(text = "Create samples")
-            }
+//            Button(onClick = { createSamples() }) {
+//                Text(text = "Create samples")
+//            }
         }
         Button(onClick = { viewModel.send(*surveys.orEmpty().toTypedArray()) }) {
-            Text(text = "Send")
+            Text(text = "Sync")
         }
     }
 }
@@ -54,7 +55,7 @@ fun ResponseList(viewModel: SurveyViewModel) {
 @Composable
 fun ResponseListPreview() {
     LocalContext.current.applicationContext?.let {
-        val viewModel = SurveyViewModel.Factory.create(SurveyViewModel::class.java)
+        val viewModel = ViewModelFactory.Factory.create(SurveyViewModel::class.java)
         ResponseList(viewModel = viewModel)
     }
 }

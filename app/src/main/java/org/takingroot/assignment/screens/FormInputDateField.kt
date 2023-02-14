@@ -52,16 +52,6 @@ fun FormInputDateField(
     mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
-    val mDatePickerDialog = DatePickerDialog(
-        context,
-        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-//                mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
-
-            val x = mMonth
-        }, mYear, mMonth, mDay
-    )
-
-
     OutlinedTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
@@ -71,7 +61,6 @@ fun FormInputDateField(
                     DatePickerDialog(
                         context,
                         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-//                mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
 
                             val month = (mMonth + 1).toString()
                             val validMonth = if (month.length < 2) {
@@ -89,7 +78,6 @@ fun FormInputDateField(
 
                             val dates = "${mYear}-${validMonth}-$validDay"
                             text = dates
-                            val x = mMonth
                             onTextChanged(dates)
 
                         }, mYear, mMonth, mDay

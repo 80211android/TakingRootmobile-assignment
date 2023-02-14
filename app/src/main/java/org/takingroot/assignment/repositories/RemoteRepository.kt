@@ -1,6 +1,8 @@
-package org.takingroot.assignment.networking
+package org.takingroot.assignment.repositories
 
 import org.takingroot.assignment.models.Survey
+import org.takingroot.assignment.networking.ApiEndpoints
+import org.takingroot.assignment.networking.UserResponse
 
 class RemoteRepository(
     private val service: ApiEndpoints

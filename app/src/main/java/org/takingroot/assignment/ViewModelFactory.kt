@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import org.takingroot.assignment.models.AppDatabase
-import org.takingroot.assignment.networking.RemoteRepository
+import org.takingroot.assignment.repositories.RemoteRepository
 import org.takingroot.assignment.networking.Service
 import org.takingroot.assignment.repositories.SurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil

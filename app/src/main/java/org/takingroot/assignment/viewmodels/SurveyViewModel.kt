@@ -3,10 +3,7 @@ package org.takingroot.assignment.viewmodels
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -14,15 +11,11 @@ import kotlinx.coroutines.withContext
 import org.takingroot.assignment.domain.UIEvent
 import org.takingroot.assignment.domain.UIState
 import org.takingroot.assignment.domain.ValidationEvent
-import org.takingroot.assignment.models.AppDatabase
 import org.takingroot.assignment.models.Survey
-import org.takingroot.assignment.networking.RemoteRepository
-import org.takingroot.assignment.networking.Service
+import org.takingroot.assignment.repositories.RemoteRepository
 import org.takingroot.assignment.repositories.ISurveyRepository
-import org.takingroot.assignment.repositories.SurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil
 import retrofit2.HttpException
-import java.io.IOException
 
 class SurveyViewModel(
     private val repository: ISurveyRepository,
@@ -62,15 +55,8 @@ class SurveyViewModel(
     }
 
     fun save(vararg surveys: Survey) = viewModelScope.launch(Dispatchers.IO) {
-//        withContext(this.coroutineContext) {
-//            repository.save(
-//                *surveys
-//            )
-//        }
 
-        repository.save(
-            *surveys
-        )
+        repository.save(*surveys)
         refresh()
     }
 
@@ -80,21 +66,6 @@ class SurveyViewModel(
 
     fun onEvent(event: UIEvent) {
         when(event) {
-            is UIEvent.AccountChanged -> {
-                _uiState.value = _uiState.value.copy(
-                    userLastname = event.account
-                )
-            }
-            is UIEvent.ConfirmAccountChanged -> {
-                _uiState.value = _uiState.value.copy(
-                    confirmAccountNumber = event.confirmAccount
-                )
-            }
-            is UIEvent.CodeChanged -> {
-                _uiState.value = _uiState.value.copy(
-                    code = event.code
-                )
-            }
             is UIEvent.NameChanged -> {
                 _uiState.value = _uiState.value.copy(
                     username = event.name
