@@ -1,5 +1,6 @@
 package org.takingroot.assignment.networking
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -24,12 +25,13 @@ object Service {
         .addInterceptor(accountIdInterceptor)
         .build()
 
-    fun getInstance(): ApiEndpoints {
-        val gson = GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
-            .create()
+    private val gson: Gson = GsonBuilder()
+        .excludeFieldsWithoutExposeAnnotation()
+        .create()
 
-        return Retrofit.Builder().apply {
+
+    val serviceInstance: ApiEndpoints by lazy {
+        Retrofit.Builder().apply {
             baseUrl(Constants.baseUrl)
             addConverterFactory(GsonConverterFactory.create(gson))
             client(client)

@@ -24,7 +24,7 @@ object SurveyViewModelFactory {
             val db = AppDatabase.getDatabase(application)
             val repository = SurveyRepository(db.surveyDao())
             val verificationUtil = VerificationUtil()
-            val remoteRepository = RemoteRepository(Service.getInstance())
+            val remoteRepository = RemoteRepository(Service.serviceInstance)
             return SurveyViewModel(repository, remoteRepository, verificationUtil, SurveyMapper()) as T
         }
     }
