@@ -15,12 +15,14 @@ import org.takingroot.assignment.models.Survey
 import org.takingroot.assignment.repositories.RemoteRepository
 import org.takingroot.assignment.repositories.ISurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil
+import org.takingroot.assignment.viewmodels.map.SurveyMapper
 import retrofit2.HttpException
 
 class SurveyViewModel(
     private val repository: ISurveyRepository,
     private val remoteRepository: RemoteRepository,
-    private val verificationUtil: VerificationUtil
+    private val verificationUtil: VerificationUtil,
+    private val mapper: SurveyMapper
 ) : ViewModel() {
     val surveys = repository.surveys
 
@@ -37,8 +39,8 @@ class SurveyViewModel(
 
             try {
                 val response = remoteRepository.sendSurvey(survey)
-                val t = response
-//                repository.delete(it)
+                val surveyResponse = mapper.mapToSurvey(response)
+                repository.delete(surveyResponse)
 
             } catch (exception: Exception) {
 
@@ -48,8 +50,6 @@ class SurveyViewModel(
                     }
                 }
             }
-
-
         }
         repository.fetchAll()
     }

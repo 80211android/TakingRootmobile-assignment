@@ -9,6 +9,7 @@ import org.takingroot.assignment.networking.Service
 import org.takingroot.assignment.repositories.SurveyRepository
 import org.takingroot.assignment.utils.VerificationUtil
 import org.takingroot.assignment.viewmodels.SurveyViewModel
+import org.takingroot.assignment.viewmodels.map.SurveyMapper
 
 object ViewModelFactory {
 
@@ -24,7 +25,7 @@ object ViewModelFactory {
             val repository = SurveyRepository(db.surveyDao())
             val verificationUtil = VerificationUtil()
             val remoteRepository = RemoteRepository(Service.getInstance())
-            return SurveyViewModel(repository, remoteRepository, verificationUtil) as T
+            return SurveyViewModel(repository, remoteRepository, verificationUtil, SurveyMapper()) as T
         }
     }
 }

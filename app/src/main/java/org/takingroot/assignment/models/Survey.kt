@@ -10,7 +10,7 @@ data class Survey(
     @Expose
     @PrimaryKey
     @NonNull
-    var id: UUID = UUID.randomUUID(),
+    var id: String = UUID.randomUUID().toString(),
     @Expose
     @NonNull
     val first_name: String,
