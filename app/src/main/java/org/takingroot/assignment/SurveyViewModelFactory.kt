@@ -11,7 +11,7 @@ import org.takingroot.assignment.utils.VerificationUtil
 import org.takingroot.assignment.viewmodels.SurveyViewModel
 import org.takingroot.assignment.viewmodels.map.SurveyMapper
 
-object ViewModelFactory {
+object SurveyViewModelFactory {
 
     val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(

@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel: SurveyViewModel by viewModels { ViewModelFactory.Factory }
+        val viewModel: SurveyViewModel by viewModels { SurveyViewModelFactory.Factory }
 
         setContent {
             MobileAssignmentTheme {
@@ -60,7 +60,7 @@ fun Home(viewModel: SurveyViewModel) {
 @Composable
 fun DefaultPreview() {
     LocalContext.current.applicationContext?.let {
-        val viewModel = ViewModelFactory.Factory.create(SurveyViewModel::class.java)
+        val viewModel = SurveyViewModelFactory.Factory.create(SurveyViewModel::class.java)
 
         MobileAssignmentTheme {
             Home(viewModel)
