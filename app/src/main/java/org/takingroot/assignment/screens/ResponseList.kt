@@ -1,11 +1,15 @@
 package org.takingroot.assignment.screens
 
+import android.content.Context
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -16,6 +20,22 @@ import org.takingroot.assignment.viewmodels.SurveyViewModel
 
 @Composable
 fun ResponseList(viewModel: SurveyViewModel) {
+
+    val context: Context = LocalContext.current
+    LaunchedEffect(key1 = context) {
+        viewModel.surveyViewModelEventsAndStates.collect { event ->
+            when(event) {
+                is SurveyViewModel.SurveyViewModelEventsAndStates.UploadSuccessfulState-> {
+                    Toast.makeText(context,"Forms Successfully uploaded.", Toast.LENGTH_LONG).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                        show()
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun createSamples() {
         val surveys = (0..5).map {
             Survey(
@@ -41,6 +61,8 @@ fun ResponseList(viewModel: SurveyViewModel) {
             Button(onClick = viewModel::refresh) {
                 Text(text = "Refresh list")
             }
+
+            // TEMPORARILY DISABLED
 //            Button(onClick = { createSamples() }) {
 //                Text(text = "Create samples")
 //            }

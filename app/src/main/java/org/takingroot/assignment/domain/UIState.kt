@@ -1,8 +1,6 @@
 package org.takingroot.assignment.domain
 
-/**
- * Created by Saurabh
- */
+
 data class UIState(
     val username: String = "",
     val userLastname: String = "",

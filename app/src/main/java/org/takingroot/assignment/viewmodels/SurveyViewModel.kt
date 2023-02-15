@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.takingroot.assignment.domain.UIEvent
 import org.takingroot.assignment.domain.UIState
-import org.takingroot.assignment.domain.ValidationEvent
 import org.takingroot.assignment.models.Survey
 import org.takingroot.assignment.repositories.RemoteRepository
 import org.takingroot.assignment.repositories.ISurveyRepository
@@ -28,7 +27,7 @@ class SurveyViewModel(
 
     private var _uiState = mutableStateOf(UIState())
     val uiState: State<UIState> = _uiState
-    val validationEvent = MutableSharedFlow<ValidationEvent>()
+    val surveyViewModelEventsAndStates = MutableSharedFlow<SurveyViewModelEventsAndStates>()
 
     init {
         this.refresh()
@@ -41,6 +40,7 @@ class SurveyViewModel(
                 val response = remoteRepository.sendSurvey(survey)
                 val surveyResponse = mapper.mapToSurvey(response)
                 repository.delete(surveyResponse)
+                surveyViewModelEventsAndStates.emit(SurveyViewModelEventsAndStates.UploadSuccessfulState)
 
             } catch (exception: Exception) {
 
@@ -127,8 +127,13 @@ class SurveyViewModel(
                     email = uiState.value.email
                 )
                 save(survey)
-                validationEvent.emit(ValidationEvent.Success)
+                surveyViewModelEventsAndStates.emit(SurveyViewModelEventsAndStates.SuccessEvent)
             }
         }
+    }
+
+    sealed class SurveyViewModelEventsAndStates {
+        object SuccessEvent: SurveyViewModelEventsAndStates()
+        object UploadSuccessfulState: SurveyViewModelEventsAndStates()
     }
 }

@@ -1,8 +1,6 @@
 package org.takingroot.assignment.domain
 
-/**
- * Created by Saurabh
- */
+
 sealed class UIEvent {
     data class NameChanged(val name: String): UIEvent()
     data class LastNameChanged(val name: String): UIEvent()

@@ -1,6 +1,7 @@
 package org.takingroot.assignment.screens
 
 import android.content.Context
+import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.takingroot.assignment.domain.UIEvent
-import org.takingroot.assignment.domain.ValidationEvent
 import org.takingroot.assignment.viewmodels.SurveyViewModel
 
 @Composable
@@ -29,13 +29,15 @@ fun SurveyList(
     val context: Context = LocalContext.current
     val localFocus = LocalFocusManager.current
     LaunchedEffect(key1 = context) {
-        surveyFormViewModel.validationEvent.collect { event ->
+        surveyFormViewModel.surveyViewModelEventsAndStates.collect { event ->
             when(event) {
-                is ValidationEvent.Success -> {
-                    Toast
-                        .makeText(context,"Form saved.", Toast.LENGTH_SHORT)
-                        .show()
+                is SurveyViewModel.SurveyViewModelEventsAndStates.SuccessEvent -> {
+                    Toast.makeText(context,"Form Successfully Saved.", Toast.LENGTH_SHORT).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                        show()
+                    }
                 }
+                else -> {}
             }
         }
     }
