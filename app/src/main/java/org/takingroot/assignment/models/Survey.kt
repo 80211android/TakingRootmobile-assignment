@@ -10,14 +10,19 @@ data class Survey(
     @Expose
     @PrimaryKey
     @NonNull
-    var id: UUID = UUID.randomUUID(),
-
-    @NonNull
-    var name: String = "",
-
-    @NonNull
+    var id: String = UUID.randomUUID().toString(),
     @Expose
-    var payload: Map<String, Any> = mapOf()
+    @NonNull
+    val first_name: String,
+    @Expose
+    @NonNull
+    val last_name: String,
+    @Expose
+    @NonNull
+    val birth_date: String,
+    @Expose
+    @NonNull
+    val email: String,
 )
 
 @Dao
